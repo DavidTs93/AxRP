@@ -1,0 +1,7 @@
+name: AxRP
+main: me.DMan16.AxRP.AxRP
+depend: [AxUtils]
+version: 1.0
+description: Resource pack forcer for Aldreda
+author: DMan16
+api-version: 1.16
