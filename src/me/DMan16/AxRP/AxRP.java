@@ -1,12 +1,10 @@
 package me.DMan16.AxRP;
 
-import java.sql.DatabaseMetaData;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.List;
-
+import me.Aldreda.AxUtils.AxUtils;
+import me.Aldreda.AxUtils.Utils.Utils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -19,11 +17,12 @@ import org.bukkit.event.player.PlayerResourcePackStatusEvent.Status;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import me.Aldreda.AxUtils.AxUtils;
-import me.Aldreda.AxUtils.Utils.Utils;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.format.TextDecoration;
+import java.sql.DatabaseMetaData;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 public class AxRP extends JavaPlugin implements Listener {
 	private MySQL SQL;
@@ -48,7 +47,7 @@ public class AxRP extends JavaPlugin implements Listener {
 				if (!setLinkHash()) return;
 				for (Player player : Bukkit.getOnlinePlayers()) setRP(player);
 			}
-		}.runTaskTimer(this,1 * 60 * 20,5 * 60 * 20);
+		}.runTaskTimer(this,2 * 60 * 20,5 * 60 * 20);
 		Utils.chatColorsLogPlugin("&fAxRP &aloaded!");
 	}
 	
@@ -74,7 +73,11 @@ public class AxRP extends JavaPlugin implements Listener {
 			} else player.kick(Component.text("Resource pack download failed!").color(NamedTextColor.GOLD).decoration(
 					TextDecoration.ITALIC,false).decoration(TextDecoration.BOLD,false).append(Component.newline()).append(Component.text(
 							"Please try to relog").color(NamedTextColor.YELLOW).decoration(TextDecoration.ITALIC,false)));
-		}
+		} else if (event.getStatus() == Status.SUCCESSFULLY_LOADED) new BukkitRunnable() {
+			public void run() {
+				Utils.removeCancelledPlayer(player);
+			}
+		}.runTaskLater(this,40);
 	}
 
 	@EventHandler
@@ -83,7 +86,10 @@ public class AxRP extends JavaPlugin implements Listener {
 	}
 	
 	private void setRP(Player player) {
-		if (link != null && hash != null) player.setResourcePack(link,hash);
+		if (link != null && hash != null) {
+			Utils.addCancelledPlayer(player,true,true);
+			player.setResourcePack(link,hash);
+		}
 	}
 	
 	private boolean setLinkHash() {
@@ -100,9 +106,7 @@ public class AxRP extends JavaPlugin implements Listener {
 				}
 				return true;
 			}
-		} catch (Exception e) {
-			//e.printStackTrace();
-		}
+		} catch (Exception e) {}
 		return false;
 	}
 
