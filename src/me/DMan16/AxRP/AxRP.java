@@ -118,8 +118,8 @@ public class AxRP extends JavaPlugin implements Listener {
 	private class MySQL {
 		
 		private MySQL() throws SQLException {
-			Statement statement = AxUtils.getMySQL().getConnection().createStatement();
-			DatabaseMetaData data = AxUtils.getMySQL().getConnection().getMetaData();
+			Statement statement = AxUtils.getConnection().createStatement();
+			DatabaseMetaData data = AxUtils.getConnection().getMetaData();
 			statement.execute("CREATE TABLE IF NOT EXISTS RP (ID VARCHAR(2) NOT NULL UNIQUE);");
 			if (!data.getColumns(null,null,"RP","ID").next())
 				statement.execute("ALTER TABLE RP ADD ID VARCHAR(2) NOT NULL UNIQUE;");
@@ -133,7 +133,7 @@ public class AxRP extends JavaPlugin implements Listener {
 		
 		public String getLink() throws SQLException {
 			String link = null;
-			Statement statement = AxUtils.getMySQL().getConnection().createStatement();
+			Statement statement = AxUtils.getConnection().createStatement();
 			ResultSet result = statement.executeQuery("SELECT * FROM RP WHERE ID=\"RP\";");
 			result.next();
 			link = result.getString("URL");
@@ -143,7 +143,7 @@ public class AxRP extends JavaPlugin implements Listener {
 		
 		public String getHash() throws SQLException {
 			String link = null;
-			Statement statement = AxUtils.getMySQL().getConnection().createStatement();
+			Statement statement = AxUtils.getConnection().createStatement();
 			ResultSet result = statement.executeQuery("SELECT * FROM RP WHERE ID=\"RP\";");
 			result.next();
 			link = result.getString("Hash");
